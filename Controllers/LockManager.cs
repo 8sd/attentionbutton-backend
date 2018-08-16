@@ -13,5 +13,9 @@ namespace attentionbutton_backend.Controllers {
                 return dic [id];
             }
         }
+
+        public bool isIdInUse (string id){
+            return dic.ContainsKey(id);
+        }
     }
 }

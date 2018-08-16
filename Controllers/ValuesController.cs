@@ -6,11 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace attentionbutton_backend.Controllers {
-    public class ID {
-        [JsonProperty("ID")]
-        public String id {get;set;}
-    }
-
     [Route("/"), ApiController]
     public class ValuesController : ControllerBase {
         private static LockManager lockManager = new LockManager();
@@ -30,6 +25,20 @@ namespace attentionbutton_backend.Controllers {
             Lock waitHandler = lockManager.getLock (id);
             waitHandler.unwaitall();
             return "alert initiated " + id;
+        }
+
+        [HttpGet("/getUnusedID")]
+        public ActionResult<String> getUnusedID() {
+            string id;
+            
+            do {
+                Random random = new Random(System.DateTime.Now.Millisecond);
+                const string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                id = new string(Enumerable.Repeat(chars, 5)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
+            } while (lockManager.isIdInUse(id));
+
+            return id;
         }
     }
 }
